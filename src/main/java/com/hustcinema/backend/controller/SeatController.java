@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,11 +45,12 @@ public class SeatController {
     }
     
     @GetMapping("/{scheduleId}")
-    public List<SeatRespond> getSeat(@PathVariable String scheduleId, HttpServletRequest request) throws IOException{
+    public List<SeatRespond> getSeatByScheduleId( @PathVariable String scheduleId, HttpServletRequest request) throws IOException{
 
         HttpSession session = (HttpSession) request.getSession();
         // Lưu id lịch chiếu
         session.setAttribute("scheduleId", scheduleId);
+        // System.out.println("getSeat: scheduleId: " + session.getAttribute("scheduleId"));
         // Lấy danh sách ghế cho lịch chiếu đã chọn
         List<SeatRespond> listSeat = seatService.getSeatsByScheduleId(scheduleId);
 

@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/user")
 
 public class UserController {

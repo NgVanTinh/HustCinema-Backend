@@ -8,6 +8,7 @@ import com.hustcinema.backend.dto.respond.ScheduleRespond;
 import com.hustcinema.backend.model.Schedule;
 import com.hustcinema.backend.service.ScheduleService;
 
+import java.time.LocalDate;
 import java.util.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/schedule")
 public class ScheduleController {
     
@@ -34,9 +34,19 @@ public class ScheduleController {
         return scheduleService.findAllSchedule();
     }
 
+    @GetMapping("/id={scheduleId}")
+    ScheduleRespond getScheduleById(@PathVariable String scheduleId) {
+        return scheduleService.findScheduleById(scheduleId);
+    }
+
     @GetMapping("/{movieId}")
     List<ScheduleRespond> getScheduleByMovieId(@PathVariable String movieId) {
         return scheduleService.findScheduleByMovieId(movieId);
+    }
+
+    @GetMapping("/{movieId}/{date}")
+    List<ScheduleRespond> getScheduleByMovieIdAndDate(@PathVariable String movieId, @PathVariable LocalDate date) {
+        return scheduleService.findScheduleByMovieIdAndDate(movieId, date);
     }
 
     @PutMapping("/{id}")

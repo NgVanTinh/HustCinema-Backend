@@ -1,5 +1,6 @@
 package com.hustcinema.backend.service;
 
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
@@ -12,8 +13,9 @@ import org.springframework.stereotype.Service;
 import com.hustcinema.backend.dto.request.AuthenticationRequest;
 import com.hustcinema.backend.dto.request.LogoutRequest;
 import com.hustcinema.backend.dto.respond.AuthenticationRespond;
-import com.hustcinema.backend.exception.ErrorCode;
+import com.hustcinema.backend.model.InvalidatedToken;
 import com.hustcinema.backend.model.User;
+import com.hustcinema.backend.repository.InvalidateTokenRepository;
 import com.hustcinema.backend.repository.UserRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -35,6 +37,8 @@ public class AuthenticationService {
     protected long REFRESHABLE_DURATION = 36000;
 
     @Autowired
+    private InvalidateTokenRepository invalidatedTokenRepository;
+    @Autowired
     private UserRepository userRepository;
 
     @NonFinal
@@ -55,6 +59,7 @@ public class AuthenticationService {
         AuthenticationRespond respond = new AuthenticationRespond();
         respond.setToken(token);
         respond.setAuthenticated(auth);
+        respond.setUser(user.getFirstName() + " " + user.getLastName());
         return respond; 
     }
 
@@ -65,8 +70,9 @@ public class AuthenticationService {
                     .issuer("HustCinema Administrator")
                     .issueTime(new Date())
                     .expirationTime(new Date(
-                        System.currentTimeMillis() + 1000 * 60 * 60 
+                            Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                     ))
+                    .jwtID(UUID.randomUUID().toString())
                     .claim("scope", user.getRole())
                     .build();
         
@@ -82,40 +88,40 @@ public class AuthenticationService {
         }
     }
 
-    // private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
-    //     JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+    private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException, java.text.ParseException {
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
 
-    //     SignedJWT signedJWT = SignedJWT.parse(token);
+        SignedJWT signedJWT = SignedJWT.parse(token);
 
-    //     Date expiryTime = (isRefresh)
-    //             ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
-    //                 .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
-    //             : signedJWT.getJWTClaimsSet().getExpirationTime();
+        Date expiryTime = (isRefresh)
+                ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
+                    .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                : signedJWT.getJWTClaimsSet().getExpirationTime();
 
-    //     var verified = signedJWT.verify(verifier);
+        var verified = signedJWT.verify(verifier);
 
-    //     if (!(verified && expiryTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (!(verified && expiryTime.after(new Date()))) throw new RuntimeException("Verification token failed");
 
-    //     if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
-    //         throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new RuntimeException("Verification token failed");
 
-    //     return signedJWT;
-    // }
+        return signedJWT;
+    }
 
-    // public void logout(LogoutRequest request) throws ParseException, JOSEException {
-    //     try {
-    //         var signToken = verifyToken(request.getToken(), true);
+    public void logout(LogoutRequest request) throws ParseException, JOSEException, java.text.ParseException {
+        try {
+            var signToken = verifyToken(request.getToken(), true);
 
-    //         String jit = signToken.getJWTClaimsSet().getJWTID();
-    //         Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+            String jit = signToken.getJWTClaimsSet().getJWTID();
+            Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
-    //         InvalidatedToken invalidatedToken =
-    //             InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
-
-    //         invalidatedTokenRepository.save(invalidatedToken);
-    //     } catch (AppException exception){
-    //         log.info("Token already expired");
-    //     }
-    // }
+            InvalidatedToken invalidatedToken = new InvalidatedToken();
+            invalidatedToken.setId(jit);
+            invalidatedToken.setExpiredTime(expiryTime);
+            invalidatedTokenRepository.save(invalidatedToken);
+        } catch (RuntimeException exception){
+           System.out.println("Token already expired");
+        }
+    }
 
 }

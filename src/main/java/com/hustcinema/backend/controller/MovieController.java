@@ -9,7 +9,6 @@ import com.hustcinema.backend.service.MovieService;
 import java.util.*;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/movie")
 public class MovieController {
 

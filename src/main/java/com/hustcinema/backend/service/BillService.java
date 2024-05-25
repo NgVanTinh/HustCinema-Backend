@@ -54,10 +54,10 @@ public class BillService {
     private RoomRepository roomRepository;
     
     
-    public BillRespond makeNewBill(HttpServletRequest request,String userId, List<String> listSelectedSeatId) {
-        HttpSession session = request.getSession();
+    public BillRespond makeNewBill(HttpSession session, String userId, List<String> listSelectedSeatId) {
         String scheduleId = (String) session.getAttribute("scheduleId");
-
+        // String scheduleId =(String) session.getAttribute("scheduleId");
+        // System.out.println("makeNewBill: get scheduleId: " + session.getAttribute("scheduleId"));
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id " + userId));
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found with id " + scheduleId));
         List<String> listSeatNames = new ArrayList<String>();
@@ -106,16 +106,23 @@ public class BillService {
         respond.setStatus("Unpaid");
 
         session.setAttribute("respond", respond);
+        // System.out.println("makeNewBill: get total: " + session.getAttribute("totalPrice"));
         return respond;
-
+        
     }
 
     // @PreAuthorize("hasRole('USER')")
     public BillRespond saveNewBill(HttpServletRequest request){
+        
         HttpSession session = request.getSession();
         BillRespond respond = (BillRespond) session.getAttribute("respond");
+        // System.out.println("save bill: respond" + respond);
         Bill newBill = (Bill) session.getAttribute("newBill");
+        // System.out.println("save bill: newbill" + newBill);
         List<Ticket> listTickets = (List<Ticket>) session.getAttribute("listTicket");
+        // System.out.println("save bill:" + respond);
+        // System.out.println("save bill:" + newBill);
+        // System.out.println("save bill:" + listTickets);
 
         billRepository.save(newBill);
         listTickets.forEach(ticket -> {

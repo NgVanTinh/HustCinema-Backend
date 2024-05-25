@@ -26,17 +26,19 @@ public class UserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
-    @PreAuthorize("!hasRole('ADMIN') and !hasRole('USER')")
+    // @PreAuthorize("!hasRole('ADMIN') and !hasRole('USER')")
     public User createNewUser(UserCreationRequest request) {
+        // System.out.println(request.getGender());
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email has been used!");
+            throw new RuntimeException("Email has been used!");            
+        }
+        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new RuntimeException("Phone number has been used!");
         }
         if (userRepository.existsByUserName(request.getUserName())) {
             throw new RuntimeException("Username has been used!");
         }
-        if(userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new RuntimeException("Phone number has been used!");
-        }
+        
         User newUser = new User();
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
 
@@ -52,7 +54,7 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public List<UserRespond> allUser() {
         List<User> users = new ArrayList<User>();
         users = userRepository.findAll();
@@ -123,7 +125,7 @@ public class UserService {
         
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String deleteUser(@PathVariable String id) {
         if (!userRepository.existsById(id)) {
             throw new RuntimeException("User with id = " + id + " not found!");

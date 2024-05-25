@@ -13,12 +13,9 @@ import com.hustcinema.backend.repository.UserRepository;
 import com.hustcinema.backend.service.BillService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.*;
-
-
-
-
 
 @RestController
 @RequestMapping("/api/bill")
@@ -50,13 +47,14 @@ public class BillController {
     @PostMapping("/makeBill")
     public BillRespond makeBill(HttpServletRequest request, @RequestBody List<String> selectedSeatIds) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication.getName());
+        // System.out.println("makeBill: get user name:" + authentication.getName());
+        HttpSession session = (HttpSession) request.getSession();
+        // System.out.println("makeBill: get scheduleId:" + session.getAttribute("scheduleId"));
         User user = userRepository.findByUserName(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found "));
         
         String userId = user.getId();
         
-
-        return billService.makeNewBill(request, userId, selectedSeatIds);
+        return billService.makeNewBill(session, userId, selectedSeatIds);
     }
 
     @GetMapping("/saveBill")

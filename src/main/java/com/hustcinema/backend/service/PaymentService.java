@@ -23,7 +23,18 @@ public class PaymentService {
     // @PreAuthorize("hasRole('USER')")
     public String createVnPayPayment(HttpServletRequest request) throws UnsupportedEncodingException {
         HttpSession session = request.getSession();
-        long amount = (Long) session.getAttribute("totalPrice") * 100L;
+        Long totalPrice = (Long) session.getAttribute("totalPrice");
+        long amount = 0L;
+        if(totalPrice != null){
+            amount = (Long) (session.getAttribute("totalPrice")) * 100L ;
+        }
+        else {
+            throw new RuntimeException("Invalid totalPrice");
+
+        }
+        // System.out.println("total price: " + session.getAttribute("totalPrice"));
+        
+        // System.out.println("amount: " + amount);
         // String bankCode = "NCB";
         Map<String, String> vnpParamsMap = new HashMap<String, String>();
         vnpParamsMap.put("vnp_Version", "2.1.0");
