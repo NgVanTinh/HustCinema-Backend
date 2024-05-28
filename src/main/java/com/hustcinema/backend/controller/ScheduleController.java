@@ -44,6 +44,11 @@ public class ScheduleController {
         return scheduleService.findScheduleByMovieId(movieId);
     }
 
+    @GetMapping("/date={date}")
+    List<ScheduleRespond> getScheduleByDate(@PathVariable LocalDate date) {
+        return scheduleService.findScheduleByDate(date);
+    }
+
     @GetMapping("/{movieId}/{date}")
     List<ScheduleRespond> getScheduleByMovieIdAndDate(@PathVariable String movieId, @PathVariable LocalDate date) {
         return scheduleService.findScheduleByMovieIdAndDate(movieId, date);

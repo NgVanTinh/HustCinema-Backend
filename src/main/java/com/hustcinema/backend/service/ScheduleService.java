@@ -66,6 +66,22 @@ public class ScheduleService {
         return scheduleRespond;
     }
 
+    public List<ScheduleRespond> findScheduleByDate( LocalDate date) {
+        List<Schedule> temp = scheduleRepository.findByDate(date);
+        List<ScheduleRespond> scheduleRespond = new ArrayList<>(); // Tạo danh sách mới
+        for (Schedule schedule : temp) {
+            ScheduleRespond scheduleRespondTemp = new ScheduleRespond(); // Tạo đối tượng ScheduleRespond
+            scheduleRespondTemp.setId(schedule.getId());
+            scheduleRespondTemp.setMovieName(schedule.getMovie().getMovieName());
+            scheduleRespondTemp.setRoomName(schedule.getRoom().getRoomName());
+            scheduleRespondTemp.setDate(schedule.getDate());
+            scheduleRespondTemp.setShowTime(schedule.getShowTime());
+            scheduleRespondTemp.setPrice(schedule.getPrice());
+            scheduleRespond.add(scheduleRespondTemp); // Thêm scheduleDTO vào danh sách scheduleRespond
+        }
+        return scheduleRespond;
+    }
+
     public List<ScheduleRespond> findScheduleByMovieIdAndDate(String movieId, LocalDate date) {
         List<Schedule> temp = scheduleRepository.findByMovieIdAndDate(movieId, date );
         List<ScheduleRespond> scheduleRespond = new ArrayList<>(); // Tạo danh sách mới

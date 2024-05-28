@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hustcinema.backend.service.PaymentService;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 @RestController
 @RequestMapping(value = "/api/vnpay")
 public class VnpayPaymentController {
@@ -24,28 +23,31 @@ public class VnpayPaymentController {
         return paymentService.createVnPayPayment(request);
     }
 
+    @Autowired
+    static String vnp_ReturnUrl;
     @GetMapping("/respond")
-    public ResponseEntity<String> closeTab(HttpServletRequest request) {
+    public String closeTab(HttpServletRequest request) {
 
-        String status = request.getParameter("vnp_ResponseCode");
-        String closeTabHtml = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">" +
-                "<title>Close Tab</title></head><body>" +
-                "<script type=\"text/javascript\">" +
-                "function closeCurrentTab() {" +
-                "window.open('', '_self', '');" +
-                "window.close();" +
-                "}" +
-                "setTimeout(closeCurrentTab, 1);" +
-                "</script><p>Processing payment, please wait...</p></body></html>";
+        // String status = request.getParameter("vnp_ResponseCode");
+        // String closeTabHtml = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">" +
+        //         "<title>Close Tab</title></head><body>" +
+        //         "<script type=\"text/javascript\">" +
+        //         "function closeCurrentTab() {" +
+        //         "window.open('', '_self', '');" +
+        //         "window.close();" +
+        //         "}" +
+        //         "setTimeout(closeCurrentTab, 1);" +
+        //         "</script><p>Processing payment, please wait...</p></body></html>";
 
-        if (status.equals("00")) {
-            return ResponseEntity.status(488).body(closeTabHtml);
-        } 
-        else if(status.equals("24")) {
-            return ResponseEntity.status(499).body(closeTabHtml);
-        }
-        else {
-            return ResponseEntity.status(500).body(closeTabHtml);
-        }
+        // if (status.equals("00")) {
+        //     return ResponseEntity.status(488).body(closeTabHtml);
+        // } 
+        // else if(status.equals("24")) {
+        //     return ResponseEntity.status(499).body(closeTabHtml);
+        // }
+        // else {
+        //     return ResponseEntity.status(500).body(closeTabHtml);
+        // }
+        return "redirect:" + vnp_ReturnUrl;
     }
 }

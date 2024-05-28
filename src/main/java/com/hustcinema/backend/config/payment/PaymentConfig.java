@@ -38,7 +38,7 @@ public class PaymentConfig {
     }
 
     public static String vnp_PayUrl = "http://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/api/vnpay/respond";
+    public static String vnp_ReturnUrl = "http://localhost:3000/savebill";
     public static String vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
 
     public static String Sha256(String message) {

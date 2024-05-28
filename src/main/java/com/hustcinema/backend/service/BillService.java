@@ -142,8 +142,9 @@ public class BillService {
     {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
-
+        System.out.println("user context: " + name);
         User user = userRepository.findByUserName(name).orElseThrow(() -> new RuntimeException("user not found"));
+        System.out.println("user: " + user.getUserName());
         List<Bill> listBill = new ArrayList<Bill>();
         listBill = billRepository.findByUserId(user.getId());
         List<BillRespond> listRespond = new ArrayList<BillRespond>();
@@ -153,6 +154,7 @@ public class BillService {
 
             Schedule schedule = scheduleRepository.findById(listTickets.get(0).getSchedule().getId())
                     .orElseThrow(() -> new RuntimeException("Schedule not found "));
+            respond.setBillId(bill.getId());
             respond.setCreatedTime(bill.getCreatedTime());
 
             respond.setUserName(user.getUserName());

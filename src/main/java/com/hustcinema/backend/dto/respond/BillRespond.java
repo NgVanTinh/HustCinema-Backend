@@ -7,6 +7,7 @@ import java.util.List;
 
 public class BillRespond {
 
+    private String billId;
     private LocalDateTime createdTime;
     private String userName;
     private String movieName;
@@ -70,6 +71,12 @@ public class BillRespond {
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+    public String getBillId() {
+        return billId;
+    }
+    public void setBillId(String billId) {
+        this.billId = billId;
     }
     
 }
