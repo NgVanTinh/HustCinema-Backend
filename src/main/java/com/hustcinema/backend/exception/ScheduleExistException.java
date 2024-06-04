@@ -6,6 +6,6 @@ import java.time.LocalTime;
 public class ScheduleExistException extends RuntimeException {
     
     public ScheduleExistException(LocalDate date, LocalTime showTime, String roomName){
-        super("Showtime schedule on " + date + " at " + showTime + " in room " + roomName + " already exists!");
+        super("Đã tồn tại lịch chiếu ngày " + date + " lúc " + showTime + " tại phòng chiếu " + roomName);
     }
 }

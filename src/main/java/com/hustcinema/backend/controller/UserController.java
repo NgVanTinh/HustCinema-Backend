@@ -7,6 +7,7 @@ import com.hustcinema.backend.service.UserService;
 
 import jakarta.validation.Valid;
 
+import com.hustcinema.backend.dto.request.UserChangePasswordRequest;
 import com.hustcinema.backend.dto.request.UserCreationRequest;
 import com.hustcinema.backend.dto.request.UserUpdateRequest;
 import com.hustcinema.backend.dto.respond.UserRespond;
@@ -46,9 +47,15 @@ public class UserController {
     public UserRespond getUserInfor(){
         return userService.getMyInfo();
     }
+
     @PutMapping("/")
     public User updatUser(@RequestBody UserUpdateRequest newUser){
         return userService.updateUser(newUser);
+    }
+
+    @PutMapping("/change-password")
+    public User changePassword(@RequestBody UserChangePasswordRequest newUser) {
+        return userService.changePasswordUser(newUser);
     }
 
     @DeleteMapping("/{id}")
@@ -56,6 +63,4 @@ public class UserController {
         return userService.deleteUser(id);
     } 
     
-    
-
 }

@@ -78,5 +78,4 @@ public class BillRespond {
     public void setBillId(String billId) {
         this.billId = billId;
     }
-    
 }

@@ -3,7 +3,7 @@ package com.hustcinema.backend.dto.request;
 import jakarta.validation.constraints.Pattern;
 
 public class UserUpdateRequest {
-    
+    private String id;
     private String firstName;
     private String lastName;
     private int age;
@@ -17,8 +17,6 @@ public class UserUpdateRequest {
     private String email;
     private String userName;
 
-    private String newPassword;
-    private String oldPassword;
     public String getFirstName() {
         return firstName;
     }
@@ -61,18 +59,13 @@ public class UserUpdateRequest {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-    public String getNewPassword() {
-        return newPassword;
+    public String getId() {
+        return id;
     }
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
+    public void setId(String id) {
+        this.id = id;
     }
-    public String getOldPassword() {
-        return oldPassword;
-    }
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
+   
 
     
 }

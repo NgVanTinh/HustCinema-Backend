@@ -5,6 +5,16 @@ public class SeatRespond {
     private String seatName;
     private String roomId;
     private boolean isOccupied;
+    private boolean isHold = false;
+    
+
+    public boolean isHold() {
+        return isHold;
+    }
+
+    public void setHold(boolean isHold) {
+        this.isHold = isHold;
+    }
 
     public String getRoomId() {
         return roomId;

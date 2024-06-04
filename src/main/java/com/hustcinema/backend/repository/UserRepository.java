@@ -11,6 +11,10 @@ import com.hustcinema.backend.model.User;
 public interface UserRepository extends JpaRepository<User, String> {
     
     Optional<User> findByUserName(String username);
+    
+    Optional<User> findByEmail(String username);
+    
+    Optional<User> findByPhoneNumber(String username);
 
     boolean existsByUserName(String username);
 

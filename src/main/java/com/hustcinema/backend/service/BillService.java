@@ -142,11 +142,12 @@ public class BillService {
     {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
-        System.out.println("user context: " + name);
+        // System.out.println("user context: " + name);
         User user = userRepository.findByUserName(name).orElseThrow(() -> new RuntimeException("user not found"));
-        System.out.println("user: " + user.getUserName());
+        // System.out.println("user: " + user.getUserName());
         List<Bill> listBill = new ArrayList<Bill>();
         listBill = billRepository.findByUserId(user.getId());
+        
         List<BillRespond> listRespond = new ArrayList<BillRespond>();
         for(Bill bill : listBill){
             List<Ticket> listTickets = ticketRepository.findByBillId(bill.getId());
@@ -181,6 +182,8 @@ public class BillService {
             respond.setTotalPrice(bill.getTotalPrice());
 
             respond.setStatus("Paid");
+
+            listRespond.add(respond);
 
         }
         return listRespond;

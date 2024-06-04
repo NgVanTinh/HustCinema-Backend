@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hustcinema.backend.dto.request.SeatRequest;
+import com.hustcinema.backend.dto.request.holdSeatRequest;
 import com.hustcinema.backend.dto.respond.SeatRespond;
 import com.hustcinema.backend.model.Seat;
 import com.hustcinema.backend.repository.SeatRepository;
@@ -17,7 +18,6 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,5 +57,4 @@ public class SeatController {
         return listSeat;
     }
     
-
 }

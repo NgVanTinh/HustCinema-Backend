@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.hustcinema.backend.dto.request.UserChangePasswordRequest;
 import com.hustcinema.backend.dto.request.UserCreationRequest;
 import com.hustcinema.backend.dto.request.UserUpdateRequest;
 import com.hustcinema.backend.dto.respond.UserRespond;
@@ -30,13 +31,13 @@ public class UserService {
     public User createNewUser(UserCreationRequest request) {
         // System.out.println(request.getGender());
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email has been used!");            
+            throw new RuntimeException("Email đã tồn tại!");            
         }
         if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new RuntimeException("Phone number has been used!");
+            throw new RuntimeException("Số điện thoại đã tồn tại!");
         }
         if (userRepository.existsByUserName(request.getUserName())) {
-            throw new RuntimeException("Username has been used!");
+            throw new RuntimeException("Tên đăng nhập đã tồn tại!");
         }
         
         User newUser = new User();
@@ -99,16 +100,16 @@ public class UserService {
         String name = context.getAuthentication().getName();
 
         User user = userRepository.findByUserName(name).orElseThrow(() -> new RuntimeException("user not found"));
-        if (!passwordEncoder.matches(newUser.getOldPassword(), user.getPassword())) {
-            // Xử lý mật khẩu cũ không khớp
-            throw new RuntimeException("Current password is not correct!");
-        }
-        if (userRepository.existsByEmail(newUser.getEmail())) {
-            throw new RuntimeException("Email has been used!");
-        }
-        if (userRepository.existsByUserName(newUser.getUserName())) {
-            throw new RuntimeException("Username has been used!");
-        }
+        User existUsernameUser = userRepository.findByUserName(newUser.getUserName()).orElse(user);
+        User existEmailUser = userRepository.findByEmail(newUser.getEmail()).orElse(user);
+        User existPhoneNumberUser = userRepository.findByPhoneNumber(newUser.getPhoneNumber()).orElse(user);
+        
+        if(!existUsernameUser.getUserName().equals(user.getUserName()))
+            throw new RuntimeException("Tên đăng nhập đã tồn tại!");
+        else if (!existEmailUser.getEmail().equals(user.getEmail()))
+            throw new RuntimeException("Email đã tồn tại!");
+        else if (!existPhoneNumberUser.getPhoneNumber().equals(user.getPhoneNumber()))
+            throw new RuntimeException("Số điện thoại đã tồn tại!");
         else {
             user.setAge(newUser.getAge());
             user.setEmail(newUser.getEmail());
@@ -117,12 +118,29 @@ public class UserService {
             user.setLastName(newUser.getLastName()); 
             user.setGender(newUser.getGender());
             user.setUserName(newUser.getUserName());
-            user.setPassword(passwordEncoder.encode(newUser.getNewPassword()));
-            
+
+            return userRepository.save(user);
+        }  
+    }
+
+    @PostAuthorize("returnObject.username == authentication.name")
+    public User changePasswordUser(UserChangePasswordRequest newUser) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findByUserName(name).orElseThrow(() -> new RuntimeException("user not found"));
+        System.out.println(newUser.getOldPassword() + " " + newUser.getNewPassword());
+        System.out.println(user.getPassword());
+        System.out.println(passwordEncoder.matches(newUser.getOldPassword(), user.getPassword()));
+        if (!passwordEncoder.matches(newUser.getOldPassword(), user.getPassword())) {
+            // Xử lý mật khẩu cũ không khớp
+            throw new RuntimeException("Mật khẩu hiện tại không đúng!");
+        } else {
+            // Xử lý thay đổi mật khẩu
+            user.setPassword( passwordEncoder.encode(newUser.getNewPassword()));
             return userRepository.save(user);
         }
-        
-        
+
     }
 
     // @PreAuthorize("hasRole('ROLE_ADMIN')")
