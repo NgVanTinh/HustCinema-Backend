@@ -8,6 +8,7 @@ import com.hustcinema.backend.model.HoldSeat;
 import com.hustcinema.backend.service.HoldSeatService;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,12 @@ public class HoldSeatController {
     public void freeSeat(@RequestBody holdSeatRequest request) {
         holdSeatService.freeSeat(request.getSeatId(), request.getScheduleId());
     }
+
+    @PostMapping("/freeAll")
+    public String freeAllSeatByUserIdAndScheduleId(@RequestBody holdSeatRequest request) {
+        return holdSeatService.freeAllSeatByUserIdAndScheduleId(request.getScheduleId());
+    }
+    
 
     @GetMapping("/")
     public List<HoldSeatRespond> findHoddingSeat() {

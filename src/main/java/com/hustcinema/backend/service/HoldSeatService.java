@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +32,12 @@ public class HoldSeatService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    
     public HoldSeat holdingSeat(String seatId, String scheduleId){
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
-        System.out.println("hold service - username: " + name);
+        // System.out.println("hold service - username: " + name);
         User user = userRepository.findByUserName(name).orElseThrow(() -> new RuntimeException("user not found"));
         
         Seat seat = seatRepository.findById(seatId).orElseThrow(() -> new RuntimeException("Seat not found"));
@@ -44,6 +47,20 @@ public class HoldSeatService {
         holdSeat.setSchedule(schedule);
         holdSeat.setUser(user);
         return holdSeatRepository.save(holdSeat);
+    }
+
+    public String freeAllSeatByUserIdAndScheduleId(String scheduleId){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        // System.out.println("free all seat service - username: " + name);
+        User user = userRepository.findByUserName(name).orElseThrow(() -> new RuntimeException("user not found"));
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("schedule not found"));
+        List<HoldSeat> holdSeat = holdSeatRepository.findByUserAndSchedule(user, schedule);
+        for(HoldSeat seat : holdSeat){
+            holdSeatRepository.deleteById(seat.getId());
+        }
+        return "free all successfully";
     }
 
     public void freeSeat(String seatId, String scheduleId) {
@@ -68,4 +85,6 @@ public class HoldSeatService {
         
         return holdSeatResponds;
     }
+
+
 }

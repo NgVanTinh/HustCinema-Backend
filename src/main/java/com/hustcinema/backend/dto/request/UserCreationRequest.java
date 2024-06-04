@@ -9,10 +9,10 @@ public class UserCreationRequest {
     private int age;
     private String gender;
 
-    @Pattern(regexp = "^[0-9]{10,11}$", message = "Phone number must be 10 or 11 digits")
+    @Pattern(regexp = "^[0-9]{10,11}$", message = "Số điện thoại phải gồm 10 hoặc 11 chữ số!")
     private String phoneNumber;
 
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email must be in the format")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email phải theo đúng định dạng!")
     private String email;
     private String userName;
 
